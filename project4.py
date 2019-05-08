@@ -1,5 +1,7 @@
 """
-PLEASE DOCUMENT HERE
+Name: Caius Arias 
+Class: CPSCI 375
+Professor: Helmuth
 
 Usage: python3 project3.py DATASET.csv
 """
@@ -80,7 +82,34 @@ def accuracy(nn, pairs):
 ################################################################################
 ### Neural Network code goes here
 
+class NeuralNetwork():
+    """Neural network class"""
+    def __init__(self, layers):
+        self.layers = layers
+        self.input = []
+        self.output = []
+        self.w_in = []
+        self.w_out = []
 
+##
+##    def get_outputs(self):
+##
+##
+    def forward_propagate(self):
+        for _ in range(self.layers[0]):
+            self.w_in.append(random.random())
+        print(self.w_in)
+
+##
+##
+##    def predict_class(self):
+##
+##
+##    def back_propagation_learning(self, input):
+
+
+
+    
 
 
 
@@ -98,7 +127,8 @@ def main():
 
     ### I expect the running of your program will work something like this;
     ### this is not mandatory and you could have something else below entirely.
-    # nn = NeuralNetwork([3, 6, 3])
+    nn = NeuralNetwork([3, 6, 3])
+    nn.forward_propagate()
     # nn.back_propagation_learning(training)
 
 if __name__ == "__main__":
