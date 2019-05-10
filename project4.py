@@ -4,9 +4,11 @@ Class: CPSCI 375
 Professor: Helmuth
 
 Usage: python3 project3.py DATASET.csv
+References Used: Welch Labs - https://www.youtube.com/watch?v=UJwK6jAStmg
 """
 
 import csv, sys, random, math
+from numpy import dot
 
 def read_data(filename, delimiter=",", has_header=True):
     """Reads datafile using given delimiter. Returns a header and a list of
@@ -84,28 +86,48 @@ def accuracy(nn, pairs):
 
 class NeuralNetwork():
     """Neural network class"""
-    def __init__(self, layers):
-        self.layers = layers
-        self.input = []
-        self.output = []
+    def __init__(self, size):
+        self.input_size = size[0]
+        self.hidden_size = size[1]
+        self.output_size = size[2]
         self.w_in = []
         self.w_out = []
+
+        
+        for _ in range(self.input_size + 1):
+            weights = []
+            for _ in range(self.hidden_size):
+                weights.append(random.random())
+            self.w_in.append(weights)
+
+        
+        for _ in range(self.hidden_size):
+            weights = []
+            for _ in range(self.output_size):
+                weights.append(random.random())
+            self.w_out.append(weights)
+            
 
 ##
 ##    def get_outputs(self):
 ##
 ##
-    def forward_propagate(self):
-        for _ in range(self.layers[0]):
-            self.w_in.append(random.random())
-        print(self.w_in)
+    def forward_propagate(self, training):
+        inputs = [x for (x, y) in training]
+        activation = logistic(dot(inputs, self.w_in))
+        outputs = logistic(dot(activation, self.w_out))
+        print(outputs)
+        
 
+
+
+        
 ##
 ##
 ##    def predict_class(self):
 ##
 ##
-##    def back_propagation_learning(self, input):
+##    def back_propagation_learning(self, inputs):
 
 
 
@@ -128,7 +150,7 @@ def main():
     ### I expect the running of your program will work something like this;
     ### this is not mandatory and you could have something else below entirely.
     nn = NeuralNetwork([3, 6, 3])
-    nn.forward_propagate()
+    nn.forward_propagate(training)
     # nn.back_propagation_learning(training)
 
 if __name__ == "__main__":
