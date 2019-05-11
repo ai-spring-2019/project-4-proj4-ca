@@ -8,7 +8,7 @@ References Used: Welch Labs - https://www.youtube.com/watch?v=UJwK6jAStmg
 """
 
 import csv, sys, random, math
-from numpy import dot
+from numpy import dot, array
 
 def read_data(filename, delimiter=",", has_header=True):
     """Reads datafile using given delimiter. Returns a header and a list of
@@ -87,36 +87,47 @@ def accuracy(nn, pairs):
 class NeuralNetwork():
     """Neural network class"""
     def __init__(self, size):
-        self.input_size = size[0]
-        self.hidden_size = size[1]
-        self.output_size = size[2]
         self.w_in = []
         self.w_out = []
-
+        self.outputs = []
         
-        for _ in range(self.input_size + 1):
+        for _ in range(size[0] + 1):
             weights = []
-            for _ in range(self.hidden_size):
+            for _ in range(size[1]):
                 weights.append(random.random())
             self.w_in.append(weights)
 
+        #make weights into ndarray and remove w0 for dummy weights from array
+        self.w_in = array(self.w_in)
+        self.w_0 = self.w_in[-1, :]
+        self.w_in = self.w_in[:-1, :]
         
-        for _ in range(self.hidden_size):
+        for _ in range(size[1]):
             weights = []
-            for _ in range(self.output_size):
+            for _ in range(size[2]):
                 weights.append(random.random())
             self.w_out.append(weights)
+        self.w_out = array(self.w_out)
             
 
-##
-##    def get_outputs(self):
-##
-##
+
+    def get_outputs(self):
+        return self.outputs
+
+
     def forward_propagate(self, training):
-        inputs = [x for (x, y) in training]
+        inputs = array([x[1:] for (x, y) in training])
+
+        #multiply w0 by dummy weights
+        self.w_0 = training[0][0][0] * self.w_0
         activation = logistic(dot(inputs, self.w_in))
-        outputs = logistic(dot(activation, self.w_out))
-        print(outputs)
+
+        #for every column j in matrix, add w0,j
+        activation = self.w_0 + activation
+        
+        self.outputs = logistic(dot(activation, self.w_out))
+        print(self.outputs)
+        
         
 
 
