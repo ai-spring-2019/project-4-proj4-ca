@@ -5,6 +5,9 @@ Professor: Helmuth
 
 Usage: python3 project3.py DATASET.csv
 References Used: Welch Labs - https://www.youtube.com/watch?v=UJwK6jAStmg
+                 https://www.youtube.com/watch?v=GlcnxUlrtek&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU&index=4
+                 Mind: How to Build a Neural Network by Steven Miller - 
+                 https://stevenmiller888.github.io/mind-how-to-build-a-neural-network/
 """
 
 import csv, sys, random, math
@@ -87,8 +90,12 @@ def accuracy(nn, pairs):
 class NeuralNetwork():
     """Neural network class"""
     def __init__(self, size):
+        self.alpha = 0.5
         self.w_in = []
         self.w_out = []
+        self.hidden_sum = []
+        self.activation = []
+        self.output_sum = []
         self.outputs = []
         
         for _ in range(size[0] + 1):
@@ -118,27 +125,44 @@ class NeuralNetwork():
     def forward_propagate(self, training):
         inputs = array([x[1:] for (x, y) in training])
 
-        #multiply w0 by dummy weights
+        #multiply dummy weights w0,j by dummy value
         self.w_0 = training[0][0][0] * self.w_0
-        activation = logistic(dot(inputs, self.w_in))
+
+        self.hidden_sum = dot(inputs, self.w_in)
+        activation = logistic(self.hidden_sum)
 
         #for every column j in matrix, add w0,j
-        activation = self.w_0 + activation
-        
-        self.outputs = logistic(dot(activation, self.w_out))
+        self.activation = self.w_0 + activation
+
+        self.output_sum = dot(activation, self.w_out)
+        self.outputs = logistic(self.output_sum)
         print(self.outputs)
-        
-        
 
-
-
-        
 ##
 ##
 ##    def predict_class(self):
-##
-##
-##    def back_propagation_learning(self, inputs):
+
+
+    def back_propagation_learning(self, pairs):
+        inp = array([x[1:] for (x, y) in pairs])
+        out = array([y for (x, y) in pairs])
+                #derivative of logistic * margin of error
+        delta_j = self.outputs * (1-self.outputs) * (out - self.outputs)
+        #print(delta_j)        
+        w_out_changes = dot(self.activation.transpose(), delta_j)
+
+        delta_i = self.activation * (1 - self.activation) * dot(delta_j, self.w_out.transpose())
+        w_in_changes = dot(inp.transpose(), delta_i)
+        #print(delta_i)
+        #print(self.w_in)
+        self.w_in = self.w_in + w_in_changes * self.alpha
+        #print(self.w_in)
+        #print()
+        #print(self.w_out)
+        self.w_out = self.w_out + w_out_changes * self.alpha
+        #print(self.w_out)
+        
+        
 
 
 
@@ -160,9 +184,16 @@ def main():
 
     ### I expect the running of your program will work something like this;
     ### this is not mandatory and you could have something else below entirely.
-    nn = NeuralNetwork([3, 6, 3])
-    nn.forward_propagate(training)
-    # nn.back_propagation_learning(training)
 
+    #3 bit incrementer
+    #nn = NeuralNetwork([3, 6, 3])
+
+    #other data
+    nn = NeuralNetwork([2, 3, 1])
+    for _ in range(500):
+        nn.forward_propagate(training)
+        #nn.get_outputs()
+        nn.back_propagation_learning(training)
+    nn.get_outputs()
 if __name__ == "__main__":
     main()
